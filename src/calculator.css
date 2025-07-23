@@ -1,7 +1,7 @@
 /* динамически изменялся размер текста в инпут */
 * {
   margin: 0 auto;
-  box-sizing:border-box;
+  box-sizing: border-box;
 }
 :root {
   --accent-background: rgba(225, 158, 35, 0.979);
@@ -12,9 +12,9 @@
   --dark-theme-light-button: rgba(138, 137, 137, 0.895);
 
   --ligth-them-background: rgba(255, 255, 255, 0.842);
-  --light-them-color: black;
-  --light-them-button: rgba(189, 189, 189, 0.895);
-  --light-theme-light-button: rgba(212, 212, 212, 0.895);
+  --light-theme-color: black;
+  --light-theme-button: rgba(212, 212, 212, 0.895);
+  --light-theme-light-button: rgba(189, 189, 189, 0.895);
 }
 body {
   display: flex;
@@ -31,10 +31,10 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 550px;
-  background-color: var(--dark-theme-background);
+  width: 555px;
+  background: var(--dark-theme-background);
   border-radius: 10px;
-  border: 4px solide rgb(233, 20, 20);
+  border: 2px solid black;
   overflow: hidden;
 }
 /* ввод */
@@ -50,8 +50,7 @@ input {
 
   border: none;
   text-align: right;
-   font-size: 80px;
-
+  font-size: 80px;
 }
 input:active {
   border: none;
@@ -72,30 +71,61 @@ button {
   height: 60px;
   color: var(--dark-theme-color);
   padding: 0px;
- 
+
   font-size: 20px;
-  font-family:Verdana, Geneva, Tahoma, sans-serif;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
   font-weight: 100;
   transition: background-color 0.3s ease;
 }
-button:active{
+button:active {
   background-color: grey;
 }
-button:hover{
+button:hover {
   cursor: pointer;
 }
 .number {
   background-color: var(--dark-theme-light-button);
- }
- .number:active{
-  background-color: rgba(161, 161, 161, 0.895)
- }
+}
+.number:active {
+  background-color: rgba(161, 161, 161, 0.895);
+}
 .accent {
   background-color: var(--accent-background);
 }
 #zero {
   width: 155px;
 }
-.meow{
-height: 57px;
+.meow {
+  height: 57px;
 }
+/* светлая тема */
+#container.lightTheme {
+  background: var(--ligth-theme-background);
+  border: 3px solide black;
+}
+button.lightTheme {
+  background-color: var(--light-theme-button);
+  color: var(--light-theme-color);
+}
+/* .buttonsBlock .lightTheme {
+  color: var(--light-them-color);
+} */
+input.lightTheme {
+  background-color: var(--light-theme-background);
+  color: var(--light-theme-color);
+}
+button.lightTheme:active {
+  background-color: grey;
+}
+.number .lightTheme {
+  background-color: var(--accent-background);
+  color: var(--light-theme-color);
+}
+.accent.lightTheme{
+    background: var(--accent-background);
+    color: var(--light-theme-color)
+}
+.accent.lightTheme:active {
+  background: rgba(161, 161, 161, 0.895);
+} 
+
