@@ -91,11 +91,33 @@ function getInverse() {
       const inverse = Math.pow(Number(parts[1]), -1);
       parts[1] = inverse.toString();
       input.value = parts.join(operator);
+    //    input.value = Number(parts[0])+ inverse;
     }
   } else {
     const inverse = Math.pow(Number(input.value), -1);
     input.value = inverse.toString();
   }
+}
+function getFactorial() {
+  if (!input.value) return;
+
+  if (operator && input.value.includes(operator)) {
+    const parts = input.value.split(operator);
+
+    if (parts.length === 2 && parts[1] !== '') {
+      const factorialValue = factorial(parts[1]);
+      input.value = parts[0]+factorialValue;
+      parts[1] = factorialValue.toString();
+      input.value = parts.join(operator);
+    //    input.value = Number(parts[0]) + factorialValue;
+    }
+  } else {
+    const factorialValue= factorial(input.value);
+    input.value = factorialValue.toString();
+  }
+}
+function factorial(n) {
+  return n ? n * factorial(n - 1) : 1;
 }
 
 //значения
@@ -144,3 +166,6 @@ document
 document
   .getElementById('inverse')
   .addEventListener('click', () => getInverse());
+document
+  .getElementById('factorial')
+  .addEventListener('click', () => getFactorial());
