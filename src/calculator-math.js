@@ -79,6 +79,7 @@ function getPercent() {
     const percent = Number(input.value) / 100;
     input.value = percent.toString();
   }
+   // calculate();
 }
 
 function getInverse() {
@@ -96,6 +97,7 @@ function getInverse() {
     const inverse = Math.pow(Number(input.value), -1);
     input.value = inverse.toString();
   }
+   // calculate();
 }
 function getFactorial() {
   if (!input.value) return;
@@ -108,12 +110,12 @@ function getFactorial() {
       input.value = parts[0] + factorialValue;
       parts[1] = factorialValue.toString();
       input.value = parts.join(operator);
-      //    input.value = Number(parts[0]) + factorialValue;
-    }
+   }
   } else {
     const factorialValue = factorial(input.value);
     input.value = factorialValue.toString();
   }
+   // calculate();
 }
 function factorial(n) {
   return n ? n * factorial(n - 1) : 1;
@@ -134,6 +136,7 @@ function getSquare() {
     const square = Math.pow(Number(input.value), 2);
     input.value = square.toString();
   }
+   // calculate();
 }
 
 function getCube() {
@@ -151,6 +154,42 @@ function getCube() {
     const cube = Math.pow(Number(input.value), 3);
     input.value = cube.toString();
   }
+   // calculate();
+}
+
+// function getYPower() {
+//   if (!input.value) return;
+
+//   if (operator && input.value.includes(operator)) {
+//     const parts = input.value.split(operator);
+
+//     if (parts.length === 2 && parts[1] !== '') {
+//       const cube = Math.pow(Number(parts[1]), 3);
+//       parts[1] = cube.toString();
+//       input.value = parts.join(operator);
+//     }
+//   } else {
+//     const cube = Math.pow(Number(input.value), 3);
+//     input.value = cube.toString();
+//   }
+// }
+
+function getSqrt(y) {
+  if (!input.value) return;
+
+  if (operator && input.value.includes(operator)) {
+    const parts = input.value.split(operator);
+
+    if (parts.length === 2 && parts[1] !== '') {
+      const res = Math.pow(Number(parts[1]), 1/y);
+      parts[1] = res.toString();
+      input.value = parts.join(operator);
+    }
+  } else {
+    const res = Math.pow(Number(input.value), 1/y);
+    input.value = res.toString();
+  }
+  // calculate();
 }
 
 //значения
@@ -202,5 +241,13 @@ document
 document
   .getElementById('factorial')
   .addEventListener('click', () => getFactorial());
+
+  //степени
 document.getElementById('square').addEventListener('click', () => getSquare());
 document.getElementById('cube').addEventListener('click', () => getCube());
+// document.getElementById('cube').addEventListener('click', () => getYPower());
+
+//корни
+document.getElementById('cubeSqrt').addEventListener('click', ()=> getSqrt(3));
+document.getElementById('squareSqrt').addEventListener('click', ()=> getSqrt(2));
+// document.getElementById('ySqrt').addEventListener('click', ()=> getSqrt(y));
