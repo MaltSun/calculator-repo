@@ -91,7 +91,6 @@ function getInverse() {
       const inverse = Math.pow(Number(parts[1]), -1);
       parts[1] = inverse.toString();
       input.value = parts.join(operator);
-    //    input.value = Number(parts[0])+ inverse;
     }
   } else {
     const inverse = Math.pow(Number(input.value), -1);
@@ -106,18 +105,52 @@ function getFactorial() {
 
     if (parts.length === 2 && parts[1] !== '') {
       const factorialValue = factorial(parts[1]);
-      input.value = parts[0]+factorialValue;
+      input.value = parts[0] + factorialValue;
       parts[1] = factorialValue.toString();
       input.value = parts.join(operator);
-    //    input.value = Number(parts[0]) + factorialValue;
+      //    input.value = Number(parts[0]) + factorialValue;
     }
   } else {
-    const factorialValue= factorial(input.value);
+    const factorialValue = factorial(input.value);
     input.value = factorialValue.toString();
   }
 }
 function factorial(n) {
   return n ? n * factorial(n - 1) : 1;
+}
+
+function getSquare() {
+  if (!input.value) return;
+
+  if (operator && input.value.includes(operator)) {
+    const parts = input.value.split(operator);
+
+    if (parts.length === 2 && parts[1] !== '') {
+      const square = Math.pow(Number(parts[1]), 2);
+      parts[1] = square.toString();
+      input.value = parts.join(operator);
+    }
+  } else {
+    const square = Math.pow(Number(input.value), 2);
+    input.value = square.toString();
+  }
+}
+
+function getCube() {
+  if (!input.value) return;
+
+  if (operator && input.value.includes(operator)) {
+    const parts = input.value.split(operator);
+
+    if (parts.length === 2 && parts[1] !== '') {
+      const cube = Math.pow(Number(parts[1]), 3);
+      parts[1] = cube.toString();
+      input.value = parts.join(operator);
+    }
+  } else {
+    const cube = Math.pow(Number(input.value), 3);
+    input.value = cube.toString();
+  }
 }
 
 //значения
@@ -169,3 +202,5 @@ document
 document
   .getElementById('factorial')
   .addEventListener('click', () => getFactorial());
+document.getElementById('square').addEventListener('click', () => getSquare());
+document.getElementById('cube').addEventListener('click', () => getCube());
