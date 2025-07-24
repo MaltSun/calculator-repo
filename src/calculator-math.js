@@ -79,7 +79,7 @@ function getPercent() {
     const percent = Number(input.value) / 100;
     input.value = percent.toString();
   }
-   // calculate();
+   calculate();
 }
 
 function getInverse() {
@@ -97,7 +97,7 @@ function getInverse() {
     const inverse = Math.pow(Number(input.value), -1);
     input.value = inverse.toString();
   }
-   // calculate();
+   calculate();
 }
 function getFactorial() {
   if (!input.value) return;
@@ -115,7 +115,7 @@ function getFactorial() {
     const factorialValue = factorial(input.value);
     input.value = factorialValue.toString();
   }
-   // calculate();
+   calculate();
 }
 function factorial(n) {
   return n ? n * factorial(n - 1) : 1;
@@ -136,7 +136,7 @@ function getSquare() {
     const square = Math.pow(Number(input.value), 2);
     input.value = square.toString();
   }
-   // calculate();
+   calculate();
 }
 
 function getCube() {
@@ -154,7 +154,7 @@ function getCube() {
     const cube = Math.pow(Number(input.value), 3);
     input.value = cube.toString();
   }
-   // calculate();
+   calculate();
 }
 
 // function getYPower() {
@@ -189,7 +189,7 @@ function getSqrt(y) {
     const res = Math.pow(Number(input.value), 1/y);
     input.value = res.toString();
   }
-  // calculate();
+  calculate();
 }
 
 //значения
