@@ -48,14 +48,20 @@ function getWipe() {
 }
 
 function calculate() {
+
+   if (!operator && (input.value.includes('^') || input.value.includes('√'))) {
+    const result = findPowerSign(input.value);
+    input.value = result.toString();
+    return;
+  }
   if (!operator) return;
 
   const parts = input.value.split(operator);
 
   if (parts.length !== 2 || parts[1] === '') return;
 
-  const left = Number(parts[0]);
-  const right = Number(parts[1]);
+  const left = findPowerSign(parts[0]);
+  const right = findPowerSign(parts[1]);
 
   switch (operator) {
     case '+':
@@ -77,6 +83,21 @@ function calculate() {
 
   input.value = result.toString();
   operator = '';
+}
+
+function findPowerSign(data) {
+ if (data.includes('√')) {
+    const [rootDegree, value] = data.split('√');
+    const degree = rootDegree === '' ? 2 : Number(rootDegree); // √9 → 2√9
+    return Math.pow(Number(value), 1 / degree);
+  }
+
+  if (data.includes('^')) {
+    const [base, exponent] = data.split('^');
+    return Math.pow(Number(base), Number(exponent));
+  }
+
+  return Number(data);
 }
 
 function getPercent() {
@@ -189,62 +210,12 @@ function getTenPower() {
   calculate();
 }
 
-// function getYPower() {
-//   if (!input.value) return;
-
-//   if (operator && input.value.includes(operator)) {
-//     const parts = input.value.split(operator);
-
-//     if (parts.length === 2 && parts[1] !== '') {
-//       const cube = Math.pow(Number(parts[1]), 3);
-//       parts[1] = cube.toString();
-//       input.value = parts.join(operator);
-//     }
-//   } else {
-//     const cube = Math.pow(Number(input.value), 3);
-//     input.value = cube.toString();
-//   }
-// }
-
-function getRoot(y) {
+function addSign(sign) {
   if (!input.value) return;
 
-  if (operator && input.value.includes(operator)) {
-    const parts = input.value.split(operator);
-
-    if (parts.length === 2 && parts[1] !== '') {
-      const res = Math.pow(Number(parts[1]), 1 / y);
-      parts[1] = res.toString();
-      input.value = parts.join(operator);
-    }
-  } else {
-    const res = Math.pow(Number(input.value), 1 / y);
-    input.value = res.toString();
-  }
-  calculate();
+  input.value += sign;
 }
 
-// function getYRoot(y) {
-//   if (!input.value) return;
-
-//   if (operator && input.value.includes(operator)) {
-//     const parts = input.value.split(operator);
-
-//     if (parts.length === 2 && parts[1] !== '') {
-//       const res = Math.pow(Number(parts[1]), 1 / y);
-//       parts[1] = res.toString();
-//       input.value = parts.join(operator);
-//     }
-//   } else {
-//     const res = Math.pow(Number(input.value), 1 / y);
-//     input.value = res.toString();
-//   }
-//   calculate();
-// }
-
-//значения
-
-//не ноу как ещё сделать, нет мыслИ
 function getOppositeSign() {
   if (!input.value) return;
 
@@ -252,7 +223,6 @@ function getOppositeSign() {
     const parts = input.value.split(operator);
 
     if (parts.length === 2 && parts[1] !== '') {
-    
       if (operator === '+') {
         operator = '-';
       } else if ((operator = '-')) {
@@ -296,6 +266,7 @@ function memoryRead() {
   input.value += memory.toString();
 }
 
+//ввод чисел
 [
   'zero',
   'one',
@@ -351,14 +322,14 @@ document.getElementById('cube').addEventListener('click', () => getCube());
 document
   .getElementById('tenPower')
   .addEventListener('click', () => getTenPower());
-// document.getElementById('cube').addEventListener('click', () => getYPower());
+document.getElementById('power').addEventListener('click', () => addSign('^'));
 
 //корни
 document.getElementById('cubeRoot').addEventListener('click', () => getRoot(3));
 document
   .getElementById('squareRoot')
   .addEventListener('click', () => getRoot(2));
-// document.getElementById('yRoot').addEventListener('click', () => getRoot(y));
+document.getElementById('root').addEventListener('click', () => addSign('√'));
 
 //работа с историей
 document.getElementById('ac').addEventListener('click', () => clearHistory());
