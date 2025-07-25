@@ -245,7 +245,26 @@ function getRoot(y) {
 //значения
 
 //не ноу как ещё сделать, нет мыслИ
-function getOppositeSign() {}
+function getOppositeSign() {
+  if (!input.value) return;
+
+  if (operator && input.value.includes(operator)) {
+    const parts = input.value.split(operator);
+
+    if (parts.length === 2 && parts[1] !== '') {
+    
+      if (operator === '+') {
+        operator = '-';
+      } else if ((operator = '-')) {
+        operator = '+';
+      }
+      input.value = parts.join(operator);
+    }
+  } else {
+    const operand = Number(input.value) * -1;
+    input.value = operand.toString();
+  }
+}
 
 function memoryAdd() {
   if (!input.value) return;
