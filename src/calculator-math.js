@@ -1,8 +1,3 @@
-// let currentValue = '';
-// let operator = '';
-// let result = null;
-// let memory = 0;
-
 class Command {
   execute() {}
 }
@@ -17,7 +12,6 @@ class Calculator {
   }
 
   addValue(value) {
-    // добавить валидацию на корректность ввода
     if (this.value === '0') this.value = '';
 
     this.value += value;
@@ -51,260 +45,442 @@ class Calculator {
   }
 
   calculate() {
-    if (!this.operator && (this.value.includes('^') || this.value.includes('√'))) {
-      const result = this.findPowerSign(this.value);
+    try {
+      if (
+        !this.operator &&
+        (this.value.includes('^') || this.value.includes('√'))
+      ) {
+        const result = this.findPowerSign(this.value);
+        this.value = result.toString();
+        return;
+      }
+      if (!this.operator) {
+        throw new Error('Operator is empty');
+      }
+
+      const parts = this.value.split(this.operator);
+
+      if (parts.length !== 2 || parts[1] === '') return;
+
+      const left = this.findPowerSign(parts[0]);
+      const right = this.findPowerSign(parts[1]);
+
+      if (isNaN(left) || isNaN(right)) {
+        throw new Error('Not valid number');
+      }
+
+      let result;
+
+      switch (this.operator) {
+        case '+':
+          result = left + right;
+          break;
+        case '-':
+          result = left - right;
+          break;
+        case '*':
+          result = left * right;
+          break;
+        case '/':
+          result = right !== 0 ? left / right : 'Error';
+          break;
+        case '':
+        default:
+          result = 'Error';
+      }
+
       this.value = result.toString();
-      return;
+      this.operator = '';
+    } catch (error) {
+      console.error(error.message);
     }
-    if (!this.operator) return;
-
-    const parts = this.value.split(this.operator);
-
-    if (parts.length !== 2 || parts[1] === '') return;
-
-    const left = this.findPowerSign(parts[0]);
-    const right = this.findPowerSign(parts[1]);
-
-    // const left = Number(parts[0]);
-    // const right = Number(parts[1]);
-
-    let result;
-
-    switch (this.operator) {
-      case '+':
-        result = left + right;
-        break;
-      case '-':
-        result = left - right;
-        break;
-      case '*':
-        result = left * right;
-        break;
-      case '/':
-        result = right !== 0 ? left / right : 'Error';
-        break;
-      case '':
-      default:
-        result = 'Error';
-    }
-
-    this.value = result.toString();
-    this.operator = '';
   }
 
   findPowerSign(data) {
-    if (data.includes('√')) {
-      const [rootDegree, value] = data.split('√');
+    try {
+      if (data.includes('√')) {
+        const [rootDegree, value] = data.split('√');
 
-      const degree = rootDegree === '' ? 2 : Number(rootDegree);
-      const number = Number(value);
+        const degree = rootDegree === '' ? 2 : Number(rootDegree);
+        const number = Number(value);
 
-      if (isNaN(degree) || isNaN(number) || value === '') {
-        return undefined;
+        if (isNaN(degree) || isNaN(number) || value.trim() === '') {
+          throw new Error('Invalid root expression');
+        }
+
+        return Math.pow(number, 1 / degree);
       }
 
-      return Math.pow(number, 1 / degree);
-    }
+      if (data.includes('^')) {
+        const [base, exponent] = data.split('^');
+        const baseNum = Number(base);
+        const exponentNum = Number(exponent);
 
-    if (data.includes('^')) {
-      const [base, exponent] = data.split('^');
-      const baseNum = Number(base);
-      const exponentNum = Number(exponent);
+        if (isNaN(baseNum) || isNaN(exponentNum) || exponent.trim() === '') {
+          throw new Error('Invalid power expression');
+        }
 
-      if (isNaN(baseNum) || isNaN(exponentNum) || exponent === '') {
-        return undefined;
+        return Math.pow(baseNum, exponentNum);
       }
 
-      return Math.pow(baseNum, exponentNum);
+      const num = Number(data);
+      if (isNaN(num)) {
+        throw new Error('Invalid number');
+      }
+      return num;
+    } catch (error) {
+      console.error(error.message);
+      return undefined;
     }
-
-    const num = Number(data);
-    return isNaN(num) ? undefined : num;
   }
 
   getPercent() {
-    if (!this.value) return;
-
-    if (this.operator && this.value.includes(this.operator)) {
-      const parts = this.value.split(this.operator);
-
-      if (parts.length === 2 && parts[1] !== '') {
-        const percent = Number(parts[1]) / 100;
-        parts[1] = percent.toString();
-        this.value = parts.join(this.operator);
+    try {
+      if (!this.value) {
+        throw new Error('Value is empty');
       }
-    } else {
-      const percent = Number(this.value) / 100;
-      this.value = percent.toString();
+
+      if (this.operator && this.value.includes(this.operator)) {
+        const parts = this.value.split(this.operator);
+
+        if (parts.length === 2 && parts[1] !== '') {
+          const number = Number(parts[1]);
+          if (isNaN(number)) {
+            throw new Error('Invalid number for root');
+          }
+          const percent = number / 100;
+          parts[1] = percent.toString();
+          this.value = parts.join(this.operator);
+        } else {
+          throw new Error('Invalid expression for percent');
+        }
+      } else {
+        const percent = Number(this.value) / 100;
+        this.value = percent.toString();
+      }
+      this.calculate();
+    } catch (error) {
+      console.error(error.message);
     }
-    this.calculate();
   }
 
   getInverse() {
-    if (!this.value) return;
-
-    if (this.operator && this.value.includes(this.operator)) {
-      const parts = this.value.split(this.operator);
-
-      if (parts.length === 2 && parts[1] !== '') {
-        const inverse = Math.pow(Number(parts[1]), -1);
-        parts[1] = inverse.toString();
-        this.value = parts.join(this.operator);
+    try {
+      if (!this.value) {
+        throw new Error('Value is empty');
       }
-    } else {
-      const inverse = Math.pow(Number(this.value), -1);
-      this.value = inverse.toString();
+
+      if (this.operator && this.value.includes(this.operator)) {
+        const parts = this.value.split(this.operator);
+
+        if (parts.length === 2 && parts[1] !== '') {
+          const number = Number(parts[1]);
+          if (isNaN(number)) {
+            throw new Error('Invalid number for root');
+          }
+          const inverse = Math.pow(number, -1);
+          if (!isFinite(inverse)) {
+            throw new Error('Cannot compute inverse');
+          }
+          parts[1] = inverse.toString();
+          this.value = parts.join(this.operator);
+        } else {
+          throw new Error('Invalid expression for inverse');
+        }
+      } else {
+        const inverse = Math.pow(Number(this.value), -1);
+        if (!isFinite(inverse)) {
+          throw new Error('Cannot compute inverse');
+        }
+        this.value = inverse.toString();
+      }
+      this.calculate();
+    } catch (error) {
+      console.error(error.message);
     }
-    this.calculate();
   }
   getFactorial() {
-    if (!this.value) return;
-
-    if (this.operator && this.value.includes(this.operator)) {
-      const parts = this.value.split(this.operator);
-
-      if (parts.length === 2 && parts[1] !== '') {
-        const factorialValue = this.factorial(parts[1]);
-        this.value = parts[0] + factorialValue;
-        parts[1] = factorialValue.toString();
-        this.value = parts.join(this.operator);
+    try {
+      if (!this.value) {
+        throw new Error('Value is empty');
       }
-    } else {
-      const factorialValue = this.factorial(this.value);
-      this.value = factorialValue.toString();
+
+      if (this.operator && this.value.includes(this.operator)) {
+        const parts = this.value.split(this.operator);
+
+        if (parts.length === 2 && parts[1] !== '') {
+          const factorialValue = this.factorial(parts[1]);
+          if (isNaN(factorialValue)) {
+            throw new Error('Invalid number');
+          }
+          this.value = parts[0] + factorialValue;
+          parts[1] = factorialValue.toString();
+          this.value = parts.join(this.operator);
+        }
+      } else {
+        const factorialValue = this.factorial(this.value);
+        if (isNaN(factorialValue)) {
+          throw new Error('Invalid number');
+        }
+        this.value = factorialValue.toString();
+      }
+      this.calculate();
+    } catch (error) {
+      console.error(error.message);
+      return undefined;
     }
-    this.calculate();
   }
+
   factorial(n) {
     return n ? n * this.factorial(n - 1) : 1;
   }
 
   getSquare() {
-    if (!this.value) return;
-
-    if (this.operator && this.value.includes(this.operator)) {
-      const parts = this.value.split(this.operator);
-
-      if (parts.length === 2 && parts[1] !== '') {
-        const square = Math.pow(Number(parts[1]), 2);
-        parts[1] = square.toString();
-        this.value = parts.join(this.operator);
+    try {
+      if (!this.value) {
+        throw new Error('Value is empty');
       }
-    } else {
-      const square = Math.pow(Number(this.value), 2);
-      this.value = square.toString();
+
+      if (this.operator && this.value.includes(this.operator)) {
+        const parts = this.value.split(this.operator);
+
+        if (parts.length === 2 && parts[1] !== '') {
+          const number = Number(parts[1]);
+          if (isNaN(number)) {
+            throw new Error('Invalid number for root');
+          }
+          const square = Math.pow(number, 2);
+          if (!isFinite(square)) {
+            throw new Error('Invalid number');
+          }
+          parts[1] = square.toString();
+
+          this.value = parts.join(this.operator);
+        }
+      } else {
+        const square = Math.pow(Number(this.value), 2);
+        if (!isFinite(square)) {
+          throw new Error('Invalid number');
+        }
+        this.value = square.toString();
+      }
+      this.calculate();
+    } catch (error) {
+      console.error(error.message);
+      return undefined;
     }
-    this.calculate();
   }
 
   getCube() {
-    if (!this.value) return;
-
-    if (this.operator && this.value.includes(this.operator)) {
-      const parts = this.value.split(this.operator);
-
-      if (parts.length === 2 && parts[1] !== '') {
-        const cube = Math.pow(Number(parts[1]), 3);
-        parts[1] = cube.toString();
-        this.value = parts.join(this.operator);
+    try {
+      if (!this.value) {
+        throw new Error('Value is empty');
       }
-    } else {
-      const cube = Math.pow(Number(this.value), 3);
-      this.value = cube.toString();
+
+      if (this.operator && this.value.includes(this.operator)) {
+        const parts = this.value.split(this.operator);
+
+        if (parts.length === 2 && parts[1] !== '') {
+          const number = Number(parts[1]);
+          if (isNaN(number)) {
+            throw new Error('Invalid number for root');
+          }
+          const cube = Math.pow(number, 3);
+          if (!isFinite(cube)) {
+            throw new Error('Invalid number');
+          }
+          parts[1] = cube.toString();
+          this.value = parts.join(this.operator);
+        }
+      } else {
+        const cube = Math.pow(Number(this.value), 3);
+        if (!isFinite(cube)) {
+          throw new Error('Invalid number');
+        }
+        this.value = cube.toString();
+      }
+      this.calculate();
+    } catch (error) {
+      console.error(error.message);
+      return undefined;
     }
-    this.calculate();
   }
 
   getTenPower() {
-    if (!this.value) return;
-
-    if (this.operator && this.value.includes(this.operator)) {
-      const parts = this.value.split(this.operator);
-
-      if (parts.length === 2 && parts[1] !== '') {
-        const cube = Math.pow(10, Number(parts[1]));
-        parts[1] = cube.toString();
-        this.value = parts.join(this.operator);
+    try {
+      if (!this.value) {
+        throw new Error('Value is empty');
       }
-    } else {
-      const cube = Math.pow(10, Number(this.value));
-      this.value = cube.toString();
+
+      if (this.operator && this.value.includes(this.operator)) {
+        const parts = this.value.split(this.operator);
+
+        if (parts.length === 2 && parts[1] !== '') {
+          const number = Number(parts[1]);
+          if (isNaN(number)) {
+            throw new Error('Invalid number for root');
+          }
+          const cube = Math.pow(10, number);
+          if (!isFinite(cube)) {
+            throw new Error('Invalid number');
+          }
+          parts[1] = cube.toString();
+          this.value = parts.join(this.operator);
+        }
+      } else {
+        const cube = Math.pow(10, Number(this.value));
+        if (!isFinite(cube)) {
+          throw new Error('Invalid number');
+        }
+        this.value = cube.toString();
+      }
+      this.calculate();
+    } catch (error) {
+      console.error(error.message);
+      return undefined;
     }
-    this.calculate();
   }
 
   getRoot(n) {
-    if (!this.value) return;
-
-    if (this.operator && this.value.includes(this.operator)) {
-      const parts = this.value.split(this.operator);
-
-      if (parts.length === 2 && parts[1] !== '') {
-        const square = Math.pow(Number(parts[1]), 1 / n);
-        parts[1] = square.toString();
-        this.value = parts.join(this.operator);
+    try {
+      if (!this.value) {
+        throw new Error('Value is empty');
       }
-    } else {
-      const square = Math.pow(Number(this.value), 1 / n);
-      this.value = square.toString();
+
+      if (this.operator && this.value.includes(this.operator)) {
+        const parts = this.value.split(this.operator);
+
+        if (parts.length === 2 && parts[1] !== '') {
+          const number = Number(parts[1]);
+          if (isNaN(number)) {
+            throw new Error('Invalid number for root');
+          }
+          const root = Math.pow(number, 1 / n);
+          if (!isFinite(root)) {
+            throw new Error('Cannot compute root for this number');
+          }
+          parts[1] = root.toString();
+          this.value = parts.join(this.operator);
+        }
+      } else {
+        const number = Number(this.value);
+        if (isNaN(number)) {
+          throw new Error('Invalid number for root');
+        }
+        const root = Math.pow(number, 1 / n);
+        if (!isFinite(root)) {
+          throw new Error('Cannot compute root for this number');
+        }
+        this.value = root.toString();
+      }
+      this.calculate();
+    } catch (error) {
+      console.error(error.message);
     }
-    this.calculate();
   }
 
   addSign(sign) {
-    if (!this.value) return;
+    try {
+      if (!this.value) {
+        throw new Error('Value is empty');
+      }
 
-    this.value += sign;
+      this.value += sign;
+    } catch (error) {
+      console.error(error.message);
+    }
   }
 
   getOppositeSign() {
-    if (!this.value) return;
-
-    if (this.operator && this.value.includes(this.operator)) {
-      const parts = this.value.split(this.operator);
-
-      if (parts.length === 2 && parts[1] !== '') {
-        if (this.operator === '+') {
-          operator = '-';
-        } else if ((this.operator = '-')) {
-          operator = '+';
-        }
-        this.value = parts.join(this.operator);
+    try {
+      if (!this.value) {
+        throw new Error('Value is empty');
       }
-    } else {
-      const operand = Number(this.value) * -1;
-      this.value = operand.toString();
+
+      if (this.operator && this.value.includes(this.operator)) {
+        const parts = this.value.split(this.operator);
+
+        if (parts.length === 2 && parts[1] !== '') {
+          let operator = this.operator;
+          if (operator === '+') {
+            operator = '-';
+          } else if (operator === '-') {
+            operator = '+';
+          }
+          this.value = parts.join(operator);
+        }
+      } else {
+        const operand = Number(this.value) * -1;
+        if (isNaN(operand)) {
+          throw new Error('Invalid number for opposite sign');
+        }
+        this.value = operand.toString();
+      }
+    } catch (error) {
+      console.error(error.message);
     }
   }
 
   memoryAdd() {
-    if (!this.value) return;
+    try {
+      if (!this.value) {
+        throw new Error('Value is empty');
+      }
 
-    this.calculate();
+      this.calculate();
 
-    this.memory += Number(this.value);
+      const numberToAdd = Number(this.value);
+      if (isNaN(numberToAdd)) {
+        throw new Error('Invalid number to add');
+      }
+
+      this.memory += numberToAdd;
+    } catch (error) {
+      console.error(error.message);
+    }
   }
 
   memoryWipe() {
-    if (!this.value) return;
+    try {
+      if (!this.value) {
+        throw new Error('Value is empty');
+      }
 
-    this.calculate();
+      this.calculate();
 
-    this.memory -= Number(this.value);
+      const numberToWipe = Number(this.value);
+      if (isNaN(numberToWipe)) {
+        throw new Error('Invalid number to wipe');
+      }
+
+      this.memory -= numberToWipe;
+    } catch (error) {
+      console.error(error.message);
+    }
   }
 
   memoryClear() {
-    this.memory = 0;
+    try {
+      this.memory = 0;
+    } catch (error) {
+      console.error('Error clearing memory: ', error.message);
+    }
   }
 
   memoryRead() {
-    if (this.memory == null) return;
+    try {
+      if (this.memory == null) {
+        throw new Error('Memory is empty');
+      }
 
-    if (this.value === '0') {
-      this.value = '';
+      if (this.value === '0') {
+        this.value = '';
+      }
+
+      this.value += this.memory.toString();
+    } catch (error) {
+      console.error(error.message);
     }
-
-    this.value += this.memory.toString();
   }
 }
 
@@ -316,7 +492,14 @@ class AddValueCommand extends Command {
   }
 
   execute() {
-    this.calculator.addValue(this.value);
+    try {
+      if (this.value == null) {
+        throw new Error('Value is null or undefined');
+      }
+      this.calculator.addValue(this.value);
+    } catch (error) {
+      console.error('Error executing AddValueCommand:', error.message);
+    }
   }
 }
 
@@ -327,7 +510,11 @@ class ClearHistoryCommand extends Command {
   }
 
   execute() {
-    this.calculator.clearHistory();
+    try {
+      this.calculator.clearHistory();
+    } catch (error) {
+      console.error('Error executing ClearHistoryCommand:', error.message);
+    }
   }
 }
 
@@ -339,7 +526,14 @@ class HandleOperatorCommand extends Command {
   }
 
   execute() {
-    this.calculator.handleOperator(this.operator, this.operator);
+    try {
+      if (this.operator == null) {
+        throw new Error('Operator is empty');
+      }
+      this.calculator.handleOperator(this.operator, this.operator);
+    } catch (error) {
+      console.error('Error executing HandleOperatorCommand:', error.message);
+    }
   }
 }
 class GetWipeCommand extends Command {
@@ -349,7 +543,11 @@ class GetWipeCommand extends Command {
   }
 
   execute() {
-    this.calculator.getWipe();
+    try{  this.calculator.getWipe();}
+    catch(error){
+console.error('Error executing GetWipeCommand:', error.message);
+    }
+  
   }
 }
 
@@ -360,7 +558,11 @@ class CalculateCommand extends Command {
   }
 
   execute() {
-    this.calculator.calculate();
+    try {
+      this.calculator.calculate();
+    } catch (error) {
+      console.error('Error executing CalculateCommand:', error.message);
+    }
   }
 }
 
@@ -372,7 +574,14 @@ class FindPowerSignCommand extends Command {
   }
 
   execute() {
-    return this.calculator.findPowerSign(this.data);
+    try {
+      if (this.data == null) {
+        throw new Error('Data is null or undefined');
+      }
+      return this.calculator.findPowerSign(this.data);
+    } catch (error) {
+      console.error('Error executing FindPowerSignCommand:', error.message);
+    }
   }
 }
 
@@ -383,7 +592,11 @@ class GetPercentCommand extends Command {
   }
 
   execute() {
-    this.calculator.getPercent();
+    try {
+      this.calculator.getPercent();
+    } catch (error) {
+      console.error('Error executing GetPercentCommand:', error.message);
+    }
   }
 }
 
@@ -394,7 +607,11 @@ class GetInverseCommand extends Command {
   }
 
   execute() {
-    this.calculator.getInverse();
+    try {
+      this.calculator.getInverse();
+    } catch (error) {
+      console.error('Error executing GetInverseCommand:', error.message);
+    }
   }
 }
 
@@ -405,7 +622,11 @@ class GetFactorialCommand extends Command {
   }
 
   execute() {
-    this.calculator.getFactorial();
+    try {
+      this.calculator.getFactorial();
+    } catch (error) {
+      console.error('Error executing GetFactorialCommand:', error.message);
+    }
   }
 }
 
@@ -416,7 +637,11 @@ class GetCubeCommand extends Command {
   }
 
   execute() {
-    this.calculator.getCube();
+    try {
+      this.calculator.getCube();
+    } catch (error) {
+      console.error('Error executing GetCubeCommand:', error.message);
+    }
   }
 }
 
@@ -428,7 +653,14 @@ class GetRootCommand extends Command {
   }
 
   execute() {
-    this.calculator.getRoot(this.n);
+    try {
+      if (this.n == null) {
+        throw new Error('Root degree (n) is null or undefined');
+      }
+      this.calculator.getRoot(this.n);
+    } catch (error) {
+      console.error('Error executing GetRootCommand:', error.message);
+    }
   }
 }
 
@@ -439,7 +671,11 @@ class GetOppositeSignCommand extends Command {
   }
 
   execute() {
-    this.calculator.getOppositeSign();
+    try {
+      this.calculator.getOppositeSign();
+    } catch (error) {
+      console.error('Error executing GetOppositeSignCommand:', error.message);
+    }
   }
 }
 
@@ -450,7 +686,11 @@ class GetSquareCommand extends Command {
   }
 
   execute() {
-    this.calculator.getSquare();
+    try {
+      this.calculator.getSquare();
+    } catch (error) {
+      console.error('Error executing GetSquareCommand:', error.message);
+    }
   }
 }
 
@@ -461,7 +701,11 @@ class TenPowerCommand extends Command {
   }
 
   execute() {
-    this.calculator.getTenPower();
+    try {
+      this.calculator.getTenPower();
+    } catch (error) {
+      console.error('Error executing TenPowerCommand:', error.message);
+    }
   }
 }
 
@@ -473,7 +717,14 @@ class AddSignCommand extends Command {
   }
 
   execute() {
-    this.calculator.addSign(this.sign);
+    try {
+      if (this.sign == null) {
+        throw new Error('Sign is null or undefined');
+      }
+      this.calculator.addSign(this.sign);
+    } catch (error) {
+      console.error('Error executing AddSignCommand:', error.message);
+    }
   }
 }
 
@@ -484,7 +735,11 @@ class MemoryAddCommand extends Command {
   }
 
   execute() {
-    this.calculator.memoryAdd();
+    try {
+      this.calculator.memoryAdd();
+    } catch (error) {
+      console.error('Error executing MemoryAddCommand:', error.message);
+    }
   }
 }
 
@@ -495,7 +750,11 @@ class MemoryClearCommand extends Command {
   }
 
   execute() {
-    this.calculator.memoryClear();
+    try {
+      this.calculator.memoryClear();
+    } catch (error) {
+      console.error('Error executing MemoryClearCommand:', error.message);
+    }
   }
 }
 
@@ -506,7 +765,11 @@ class MemoryReadCommand extends Command {
   }
 
   execute() {
-    this.calculator.memoryRead();
+    try {
+      this.calculator.memoryRead();
+    } catch (error) {
+      console.error('Error executing MemoryReadCommand:', error.message);
+    }
   }
 }
 
@@ -517,326 +780,204 @@ class MemoryWipeCommand extends Command {
   }
 
   execute() {
-    this.calculator.memoryWipe();
+    try {
+      this.calculator.memoryWipe();
+    } catch (error) {
+      console.error('Error executing MemoryWipeCommand:', error.message);
+    }
   }
 }
 
 function addValue(value) {
-  const command = new AddValueCommand(calculator, value);
-  command.execute();
-  input.value = calculator.value;
-  //   // добавить валидацию на корректность ввода
-  //   if (input.value === '0') input.value = '';
-
-  //   input.value += value;
+  try {
+    const command = new AddValueCommand(calculator, value);
+    command.execute();
+    input.value = calculator.value;
+  } catch (error) {
+    console.error('Error adding value:', error.message);
+  }
 }
 
 function handleOperator(op) {
-  if (input.value === '') return;
+  try {
+    if (input.value === '') return;
 
-  const command = new HandleOperatorCommand(calculator, op);
-  command.execute();
-  input.value = calculator.value;
-
-  //   if (operator && /[+\-*/]/.test(input.value)) {
-  //     calculate();
-  //   }
-
-  //   if (!/[+\-*/]$/.test(input.value)) {
-  //     input.value += op;
-  //     operator = op;
-  //   } else {
-  //     input.value = input.value.slice(0, -1) + op;
-  //     operator = op;
-  //   }
+    const command = new HandleOperatorCommand(calculator, op);
+    command.execute();
+    input.value = calculator.value;
+  } catch (error) {
+    console.error('Error handling operator:', error.message);
+  }
 }
 
 function clearHistory() {
-  const command = new ClearHistoryCommand(calculator);
-  command.execute();
-  input.value = calculator.value;
-  //   let currentValue = '';
-  //   let operator = '';
-  //   let result = null;
-  //   input.value = '0';
+  try {
+    const command = new ClearHistoryCommand(calculator);
+    command.execute();
+    input.value = calculator.value;
+  } catch (error) {
+    console.error('Error clearing history:', error.message);
+  }
 }
 
 function getWipe() {
-  const command = new GetWipeCommand(calculator);
-  command.execute();
-  input.value = calculator.value;
-  //   if (this.value === '') return;
-  //   let data = this.value.split('');
-  //   data.pop();
-  //   if (data.length === 0) {
-  //     this.value = '0';
-  //   } else {
-  //     this.value = data.join('');
-  //   }
+  try {
+    const command = new GetWipeCommand(calculator);
+    command.execute();
+    input.value = calculator.value;
+  } catch (error) {
+    console.error('Error executing getWipe:', error.message);
+  }
 }
 
 function calculate() {
-  const command = new CalculateCommand(calculator);
-  command.execute();
-  input.value = calculator.value;
-  //   if (!operator && (this.value.includes('^') || this.value.includes('√'))) {
-  //     const result = findPowerSign(this.value);
-  //     this.value = result.toString();
-  //     return;
-  //   }
-  //   if (!operator) return;
-
-  //   const parts = this.value.split(operator);
-
-  //   if (parts.length !== 2 || parts[1] === '') return;
-
-  //   const left = findPowerSign(parts[0]);
-  //   const right = findPowerSign(parts[1]);
-
-  //   switch (operator) {
-  //     case '+':
-  //       result = left + right;
-  //       break;
-  //     case '-':
-  //       result = left - right;
-  //       break;
-  //     case '*':
-  //       result = left * right;
-  //       break;
-  //     case '/':
-  //       result = right !== 0 ? left / right : 'Error';
-  //       break;
-  //     case '':
-  //     default:
-  //       result = 'Error';
-  //   }
-
-  //   this.value = result.toString();
-  //   operator = '';
+  try {
+    const command = new CalculateCommand(calculator);
+    command.execute();
+    input.value = calculator.value;
+  } catch (error) {
+    console.error('Error executing calculate:', error.message);
+  }
 }
 
 function findPowerSign() {
-  const command = new FindPowerSignCommand(calculator);
-  command.execute();
-  input.value = calculator.value;
-  //   if (data.includes('√')) {
-  //     const [rootDegree, value] = data.split('√');
-  //     const degree = rootDegree === '' ? 2 : Number(rootDegree);
-  //     return Math.pow(Number(value), 1 / degree);
-  //   }
-
-  //   if (data.includes('^')) {
-  //     const [base, exponent] = data.split('^');
-  //     return Math.pow(Number(base), Number(exponent));
-  //   }
-
-  //   return Number(data);
+  try {
+    const command = new FindPowerSignCommand(calculator);
+    command.execute();
+    input.value = calculator.value;
+  } catch (error) {
+    console.error('Error executing findPowerSign:', error.message);
+  }
 }
 
 function getPercent() {
-  const command = new GetPercentCommand(calculator);
-  command.execute();
-  input.value = calculator.value;
-  //   if (!this.value) return;
-
-  //   if (operator && this.value.includes(operator)) {
-  //     const parts = this.value.split(operator);
-
-  //     if (parts.length === 2 && parts[1] !== '') {
-  //       const percent = Number(parts[1]) / 100;
-  //       parts[1] = percent.toString();
-  //       this.value = parts.join(operator);
-  //     }
-  //   } else {
-  //     const percent = Number(this.value) / 100;
-  //     this.value = percent.toString();
-  //   }
-  //   calculate();
+  try {
+    const command = new GetPercentCommand(calculator);
+    command.execute();
+    input.value = calculator.value;
+  } catch (error) {
+    console.error('Error executing getPercent:', error.message);
+  }
 }
 
 function getInverse() {
-  const command = new GetInverseCommand(calculator);
-  command.execute();
-  input.value = calculator.value;
-  //   if (!this.value) return;
-
-  //   if (operator && this.value.includes(operator)) {
-  //     const parts = this.value.split(operator);
-
-  //     if (parts.length === 2 && parts[1] !== '') {
-  //       const inverse = Math.pow(Number(parts[1]), -1);
-  //       parts[1] = inverse.toString();
-  //       this.value = parts.join(operator);
-  //     }
-  //   } else {
-  //     const inverse = Math.pow(Number(this.value), -1);
-  //     this.value = inverse.toString();
-  //   }
-  //   calculate();
+  try {
+    const command = new GetInverseCommand(calculator);
+    command.execute();
+    input.value = calculator.value;
+  } catch (error) {
+    console.error('Error executing getInverse:', error.message);
+  }
 }
+
 function getFactorial() {
-  const command = new GetFactorialCommand(calculator);
-  command.execute();
-  input.value = calculator.value;
-  //   if (!this.value) return;
-
-  //   if (operator && this.value.includes(operator)) {
-  //     const parts = this.value.split(operator);
-
-  //     if (parts.length === 2 && parts[1] !== '') {
-  //       const factorialValue = factorial(parts[1]);
-  //       this.value = parts[0] + factorialValue;
-  //       parts[1] = factorialValue.toString();
-  //       this.value = parts.join(operator);
-  //     }
-  //   } else {
-  //     const factorialValue = factorial(this.value);
-  //     this.value = factorialValue.toString();
-  //   }
-  //   calculate();
+  try {
+    const command = new GetFactorialCommand(calculator);
+    command.execute();
+    input.value = calculator.value;
+  } catch (error) {
+    console.error('Error executing getFactorial:', error.message);
+  }
 }
-// function factorial(n) {
-//   return n ? n * factorial(n - 1) : 1;
-// }
 
 function getSquare() {
-  const command = new GetSquareCommand(calculator);
-  command.execute();
-  input.value = calculator.value;
-  //   if (!this.value) return;
-
-  //   if (operator && this.value.includes(operator)) {
-  //     const parts = this.value.split(operator);
-
-  //     if (parts.length === 2 && parts[1] !== '') {
-  //       const square = Math.pow(Number(parts[1]), 2);
-  //       parts[1] = square.toString();
-  //       this.value = parts.join(operator);
-  //     }
-  //   } else {
-  //     const square = Math.pow(Number(this.value), 2);
-  //     this.value = square.toString();
-  //   }
-  //   calculate();
+  try {
+    const command = new GetSquareCommand(calculator);
+    command.execute();
+    input.value = calculator.value;
+  } catch (error) {
+    console.error('Error executing getSquare:', error.message);
+  }
 }
 
 function getCube() {
-  const command = new GetCubeCommand(calculator);
-  command.execute();
-  input.value = calculator.value;
-  //   if (!this.value) return;
-
-  //   if (operator && this.value.includes(operator)) {
-  //     const parts = this.value.split(operator);
-
-  //     if (parts.length === 2 && parts[1] !== '') {
-  //       const cube = Math.pow(Number(parts[1]), 3);
-  //       parts[1] = cube.toString();
-  //       this.value = parts.join(operator);
-  //     }
-  //   } else {
-  //     const cube = Math.pow(Number(this.value), 3);
-  //     this.value = cube.toString();
-  //   }
-  //   calculate();
+  try {
+    const command = new GetCubeCommand(calculator);
+    command.execute();
+    input.value = calculator.value;
+  } catch (error) {
+    console.error('Error executing getCube:', error.message);
+  }
 }
 
-
 function getRoot(n) {
-  const command = new GetRootCommand(calculator, n);
-  command.execute();
-  input.value = calculator.value;
+  try {
+    const command = new GetRootCommand(calculator, n);
+    command.execute();
+    input.value = calculator.value;
+  } catch (error) {
+    console.error('Error executing getRoot:', error.message);
+  }
 }
 
 function getTenPower() {
-  const command = new TenPowerCommand(calculator);
-  command.execute();
-  input.value = calculator.value;
-  //   if (!this.value) return;
-
-  //   if (operator && this.value.includes(operator)) {
-  //     const parts = this.value.split(operator);
-
-  //     if (parts.length === 2 && parts[1] !== '') {
-  //       const cube = Math.pow(10, Number(parts[1]));
-  //       parts[1] = cube.toString();
-  //       this.value = parts.join(operator);
-  //     }
-  //   } else {
-  //     const cube = Math.pow(10, Number(this.value));
-  //     this.value = cube.toString();
-  //   }
-  //   calculate();
+  try {
+    const command = new TenPowerCommand(calculator);
+    command.execute();
+    input.value = calculator.value;
+  } catch (error) {
+    console.error('Error executing getTenPower:', error.message);
+  }
 }
 
 function addSign(sign) {
-  const command = new AddSignCommand(calculator, sign);
-  command.execute();
-  input.value = calculator.value;
-  //   if (!this.value) return;
-
-  //   this.value += sign;
+  try {
+    const command = new AddSignCommand(calculator, sign);
+    command.execute();
+    input.value = calculator.value;
+  } catch (error) {
+    console.error('Error executing addSign:', error.message);
+  }
 }
 
 function getOppositeSign() {
-  const command = new GetOppositeSignCommand(calculator);
-  command.execute();
-  input.value = calculator.value;
-  //   if (!this.value) return;
-  //   if (operator && this.value.includes(operator)) {
-  //     const parts = this.value.split(operator);
-  //     if (parts.length === 2 && parts[1] !== '') {
-  //       if (operator === '+') {
-  //         operator = '-';
-  //       } else if ((operator = '-')) {
-  //         operator = '+';
-  //       }
-  //       this.value = parts.join(operator);
-  //     }
-  //   } else {
-  //     const operand = Number(this.value) * -1;
-  //     this.value = operand.toString();
-  //   }
+  try {
+    const command = new GetOppositeSignCommand(calculator);
+    command.execute();
+    input.value = calculator.value;
+  } catch (error) {
+    console.error('Error executing getOppositeSign:', error.message);
+  }
 }
 
 function memoryAdd() {
-  const command = new MemoryAddCommand(calculator);
-  command.execute();
-  input.value = calculator.value;
-  //   if (!this.value) return;
-
-  //   calculate();
-
-  //   memory += Number(this.value);
+  try {
+    const command = new MemoryAddCommand(calculator);
+    command.execute();
+    input.value = calculator.value;
+  } catch (error) {
+    console.error('Error executing memoryAdd:', error.message);
+  }
 }
 
 function memoryWipe() {
-  const command = new MemoryWipeCommand(calculator);
-  command.execute();
-  input.value = calculator.value;
-  //   if (!this.value) return;
-
-  //   calculate();
-
-  //   memory -= Number(this.value);
+  try {
+    const command = new MemoryWipeCommand(calculator);
+    command.execute();
+    input.value = calculator.value;
+  } catch (error) {
+    console.error('Error executing memoryWipe:', error.message);
+  }
 }
 
 function memoryClear() {
-  const command = new MemoryClearCommand(calculator);
-  command.execute();
-  input.value = calculator.value;
-  // memory = 0;
+  try {
+    const command = new MemoryClearCommand(calculator);
+    command.execute();
+    input.value = calculator.value;
+  } catch (error) {
+    console.error('Error executing memoryClear:', error.message);
+  }
 }
 
 function memoryRead() {
-  const command = new MemoryReadCommand(calculator);
-  command.execute();
-  input.value = calculator.value;
-  //   if (memory == null) return;
-  //   if (this.value === '0') {
-  //     this.value = '';
-  //   }
-  //   this.value += memory.toString();
+  try {
+    const command = new MemoryReadCommand(calculator);
+    command.execute();
+    input.value = calculator.value;
+  } catch (error) {
+    console.error('Error executing memoryRead:', error.message);
+  }
 }
 
 let input = document.querySelector('input');

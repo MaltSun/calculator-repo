@@ -9,7 +9,7 @@
   <body>
     <div id="container">
       <div class="inputBlock">
-        <input type="text" maxlength="12" value="0" />
+        <input type="text" onkeyup="this.value = this.value.replace(/[^\d]/g,'');" maxlength="12" minlength="1" value="0" pattern="^\s*[0-9]+(\s*[\+\-\*/√]\s*[0-9]+)*\s*$"/>
       </div>
       <div class="buttonsBlock">
         <div>
