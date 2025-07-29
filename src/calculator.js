@@ -1,4 +1,4 @@
-class Calculator {
+export class Calculator {
   constructor() {
     this.currentValue = '';
     this.operator = '';
@@ -142,7 +142,7 @@ class Calculator {
         if (parts.length === 2 && parts[1] !== '') {
           const number = Number(parts[1]);
           if (isNaN(number)) {
-            throw new Error('Invalid number for root');
+            throw new Error('Invalid number for percent');
           }
           const percent = number / 100;
           parts[1] = percent.toString();
@@ -314,11 +314,11 @@ class Calculator {
         if (parts.length === 2 && parts[1] !== '') {
           const number = Number(parts[1]);
           if (isNaN(number)) {
-            throw new Error('Invalid number for root');
+            throw new Error('Invalid number');
           }
           const cube = Math.pow(10, number);
           if (!isFinite(cube)) {
-            throw new Error('Invalid number');
+            throw new Error('Finity number');
           }
           parts[1] = cube.toString();
           this.value = parts.join(this.operator);
@@ -381,6 +381,14 @@ class Calculator {
         throw new Error('Value is empty');
       }
 
+      if (this.value.includes(sign)) {
+        throw new Error(`Sign "${sign}" already used`);
+      }
+
+      if (/[+\-*/]$/.test(this.value)) {
+        throw new Error(`Cannot add "${sign}" after operator`);
+      }
+
       this.value += sign;
     } catch (error) {
       console.error(error.message);
@@ -400,8 +408,10 @@ class Calculator {
           let operator = this.operator;
           if (operator === '+') {
             operator = '-';
+            this.operator = '-';
           } else if (operator === '-') {
             operator = '+';
+            this.operator = '+';
           }
           this.value = parts.join(operator);
         }
@@ -479,5 +489,3 @@ class Calculator {
     }
   }
 }
-
-module.exports = Calculator;
