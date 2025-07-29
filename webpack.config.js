@@ -4,10 +4,10 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
-  mode: 'production', // Установите режим в 'production' для оптимизации кода
+  mode: 'production', 
   entry: './src/index.js',
   output: {
-    filename: 'bundle.[contenthash].js', // Генерация хешированного имени файла
+    filename: 'bundle.[contenthash].js', 
     path: path.resolve(__dirname, 'dist'),
   },
   module: {
