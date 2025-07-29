@@ -1,4 +1,4 @@
-/* динамически изменялся размер текста в инпут */
+
 * {
   margin: 0 auto;
   box-sizing: border-box;
@@ -80,7 +80,6 @@ button {
   font-weight: 100;
   transition: background-color 0.3s ease;
 
-  /* box-shadow: -3px 5px rgba(0, 0, 0, 0.932); */
 }
 button:active {
   background-color: grey;
@@ -112,9 +111,6 @@ button.lightTheme {
   background-color: var(--light-theme-button);
   color: var(--light-theme-color);
 }
-/* .buttonsBlock .lightTheme {
-  color: var(--light-them-color);
-} */
 input.lightTheme {
   background-color: var(--light-theme-background);
   color: var(--light-theme-color);
