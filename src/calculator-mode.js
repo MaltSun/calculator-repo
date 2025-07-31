@@ -9,9 +9,9 @@ function lightmode_init() {
     set: function (key, value, time, path, secure = false) {
       let expires = new Date();
       expires.setTime(expires.getTime() + time);
-      var path =
-        typeof path !== 'undefined' ? (pathValue = 'path=' + path + ';') : '';
-      var secure = secure ? ';secure' : '';
+      path =
+        typeof path !== 'undefined' ? (path = 'path=' + path + ';') : '';
+       secure = secure ? ';secure' : '';
 
       document.cookie =
         key +
