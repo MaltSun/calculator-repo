@@ -130,100 +130,60 @@ export class Calculator {
     }
   }
 
+  applyUnaryOperation(operation, errorMessage = 'Invalid number') {
+    if (!this.value) throw new Error('Value is empty');
+
+    const apply = (num) => {
+      const result = operation(num);
+      if (isNaN(result) || !isFinite(result)) throw new Error(errorMessage);
+      return result;
+    };
+
+    if (this.operator && this.value.includes(this.operator)) {
+      const parts = this.value.split(this.operator);
+      if (parts.length === 2 && parts[1] !== '') {
+        const number = Number(parts[1]);
+        parts[1] = apply(number).toString();
+        this.value = parts.join(this.operator);
+      } else {
+        throw new Error('Invalid expression');
+      }
+    } else {
+      const number = Number(this.value);
+      this.value = apply(number).toString();
+    }
+
+    this.calculate();
+  }
+
   getPercent() {
     try {
-      if (!this.value) {
-        throw new Error('Value is empty');
-      }
-
-      if (this.operator && this.value.includes(this.operator)) {
-        const parts = this.value.split(this.operator);
-
-        if (parts.length === 2 && parts[1] !== '') {
-          const number = Number(parts[1]);
-          if (isNaN(number)) {
-            throw new Error('Invalid number for percent');
-          }
-          const percent = number / 100;
-          parts[1] = percent.toString();
-          this.value = parts.join(this.operator);
-        } else {
-          throw new Error('Invalid expression for percent');
-        }
-      } else {
-        const percent = Number(this.value) / 100;
-        this.value = percent.toString();
-      }
-      this.calculate();
-    } catch (error) {
-      console.error(error.message);
+      this.applyUnaryOperation((n) => n / 100, 'Invalid number for percent');
+    } catch (e) {
+      console.error(e.message);
     }
   }
 
   getInverse() {
     try {
-      if (!this.value) {
-        throw new Error('Value is empty');
-      }
-
-      if (this.operator && this.value.includes(this.operator)) {
-        const parts = this.value.split(this.operator);
-
-        if (parts.length === 2 && parts[1] !== '') {
-          const number = Number(parts[1]);
-          if (isNaN(number)) {
-            throw new Error('Invalid number for root');
-          }
-          const inverse = Math.pow(number, -1);
-          if (!isFinite(inverse)) {
-            throw new Error('Cannot compute inverse');
-          }
-          parts[1] = inverse.toString();
-          this.value = parts.join(this.operator);
-        } else {
-          throw new Error('Invalid expression for inverse');
-        }
-      } else {
-        const inverse = Math.pow(Number(this.value), -1);
-        if (!isFinite(inverse)) {
-          throw new Error('Cannot compute inverse');
-        }
-        this.value = inverse.toString();
-      }
-      this.calculate();
-    } catch (error) {
-      console.error(error.message);
+      this.applyUnaryOperation(
+        (n) => Math.pow(n, -1),
+        'Cannot compute inverse',
+      );
+    } catch (e) {
+      console.error(e.message);
     }
   }
+
   getFactorial() {
     try {
-      if (!this.value) {
-        throw new Error('Value is empty');
-      }
-
-      if (this.operator && this.value.includes(this.operator)) {
-        const parts = this.value.split(this.operator);
-
-        if (parts.length === 2 && parts[1] !== '') {
-          const factorialValue = this.factorial(parts[1]);
-          if (isNaN(factorialValue)) {
-            throw new Error('Invalid number');
-          }
-          this.value = parts[0] + factorialValue;
-          parts[1] = factorialValue.toString();
-          this.value = parts.join(this.operator);
-        }
-      } else {
-        const factorialValue = this.factorial(this.value);
-        if (isNaN(factorialValue)) {
-          throw new Error('Invalid number');
-        }
-        this.value = factorialValue.toString();
-      }
-      this.calculate();
-    } catch (error) {
-      console.error(error.message);
-      return undefined;
+      this.applyUnaryOperation((n) => {
+        if (!Number.isInteger(n) || n < 0)
+          throw new Error('Factorial requires non-negative integer');
+        return this.factorial(n);
+      }, 'Invalid number for factorial');
+    } catch (e) {
+      console.error(e.message);
     }
   }
 
@@ -233,145 +193,36 @@ export class Calculator {
 
   getSquare() {
     try {
-      if (!this.value) {
-        throw new Error('Value is empty');
-      }
-
-      if (this.operator && this.value.includes(this.operator)) {
-        const parts = this.value.split(this.operator);
-
-        if (parts.length === 2 && parts[1] !== '') {
-          const number = Number(parts[1]);
-          if (isNaN(number)) {
-            throw new Error('Invalid number for root');
-          }
-          const square = Math.pow(number, 2);
-          if (!isFinite(square)) {
-            throw new Error('Invalid number');
-          }
-          parts[1] = square.toString();
-
-          this.value = parts.join(this.operator);
-        }
-      } else {
-        const square = Math.pow(Number(this.value), 2);
-        if (!isFinite(square)) {
-          throw new Error('Invalid number');
-        }
-        this.value = square.toString();
-      }
-      this.calculate();
-    } catch (error) {
-      console.error(error.message);
-      return undefined;
+      this.applyUnaryOperation((n) => Math.pow(n, 2));
+    } catch (e) {
+      console.error(e.message);
     }
   }
 
   getCube() {
     try {
-      if (!this.value) {
-        throw new Error('Value is empty');
-      }
-
-      if (this.operator && this.value.includes(this.operator)) {
-        const parts = this.value.split(this.operator);
-
-        if (parts.length === 2 && parts[1] !== '') {
-          const number = Number(parts[1]);
-          if (isNaN(number)) {
-            throw new Error('Invalid number for root');
-          }
-          const cube = Math.pow(number, 3);
-          if (!isFinite(cube)) {
-            throw new Error('Invalid number');
-          }
-          parts[1] = cube.toString();
-          this.value = parts.join(this.operator);
-        }
-      } else {
-        const cube = Math.pow(Number(this.value), 3);
-        if (!isFinite(cube)) {
-          throw new Error('Invalid number');
-        }
-        this.value = cube.toString();
-      }
-      this.calculate();
-    } catch (error) {
-      console.error(error.message);
-      return undefined;
+      this.applyUnaryOperation((n) => Math.pow(n, 3));
+    } catch (e) {
+      console.error(e.message);
     }
   }
 
   getTenPower() {
     try {
-      if (!this.value) {
-        throw new Error('Value is empty');
-      }
-
-      if (this.operator && this.value.includes(this.operator)) {
-        const parts = this.value.split(this.operator);
-
-        if (parts.length === 2 && parts[1] !== '') {
-          const number = Number(parts[1]);
-          if (isNaN(number)) {
-            throw new Error('Invalid number');
-          }
-          const cube = Math.pow(10, number);
-          if (!isFinite(cube)) {
-            throw new Error('Finity number');
-          }
-          parts[1] = cube.toString();
-          this.value = parts.join(this.operator);
-        }
-      } else {
-        const cube = Math.pow(10, Number(this.value));
-        if (!isFinite(cube)) {
-          throw new Error('Invalid number');
-        }
-        this.value = cube.toString();
-      }
-      this.calculate();
-    } catch (error) {
-      console.error(error.message);
-      return undefined;
+      this.applyUnaryOperation((n) => Math.pow(10, n), 'Invalid number');
+    } catch (e) {
+      console.error(e.message);
     }
   }
 
   getRoot(n) {
     try {
-      if (!this.value) {
-        throw new Error('Value is empty');
-      }
-
-      if (this.operator && this.value.includes(this.operator)) {
-        const parts = this.value.split(this.operator);
-
-        if (parts.length === 2 && parts[1] !== '') {
-          const number = Number(parts[1]);
-          if (isNaN(number)) {
-            throw new Error('Invalid number for root');
-          }
-          const root = Math.pow(number, 1 / n);
-          if (!isFinite(root)) {
-            throw new Error('Cannot compute root for this number');
-          }
-          parts[1] = root.toString();
-          this.value = parts.join(this.operator);
-        }
-      } else {
-        const number = Number(this.value);
-        if (isNaN(number)) {
-          throw new Error('Invalid number for root');
-        }
-        const root = Math.pow(number, 1 / n);
-        if (!isFinite(root)) {
-          throw new Error('Cannot compute root for this number');
-        }
-        this.value = root.toString();
-      }
-      this.calculate();
-    } catch (error) {
-      console.error(error.message);
+      this.applyUnaryOperation(
+        (x) => Math.pow(x, 1 / n),
+        'Cannot compute root for this number',
+      );
+    } catch (e) {
+      console.error(e.message);
     }
   }
 
