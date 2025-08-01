@@ -38,7 +38,7 @@ body {
   overflow: hidden;
   box-shadow: 10px 15px rgba(54, 53, 53, 0.283);
 }
-/* ввод */
+/* input */
 .inputBlock {
   width: 100%;
 }
@@ -58,7 +58,7 @@ input {
 input:active {
   border: none;
 }
-/* кнопки */
+/* buttons */
 .buttonsBlock {
   display: flex;
   flex-direction: column;
@@ -102,7 +102,7 @@ button:hover {
 .meow {
   height: 57px;
 }
-/* светлая тема */
+/* light theme */
 #container.lightTheme {
   background: var(--ligth-theme-background);
   border: 3px solide black;

@@ -89,25 +89,6 @@ class CalculateCommand extends Command {
   }
 }
 
-// class FindPowerSignCommand extends Command {
-//   constructor(calculator, data) {
-//     super();
-//     this.calculator = calculator;
-//     this.data = data;
-//   }
-
-//   execute() {
-//     try {
-//       if (this.data == null) {
-//         throw new Error('Data is null or undefined');
-//       }
-//       this.calculator.findPowerSign(this.data);
-//     } catch (error) {
-//       console.error('Error executing FindPowerSignCommand:', error.message);
-//     }
-//   }
-// }
-
 class GetPercentCommand extends Command {
   constructor(calculator) {
     super();
@@ -360,16 +341,6 @@ function calculate() {
     console.error('Error executing calculate:', error.message);
   }
 }
-
-// function findPowerSign() {
-//   try {
-//     const command = new FindPowerSignCommand(calculator);
-//     command.execute();
-//     input.value = calculator.value;
-//   } catch (error) {
-//     console.error('Error executing findPowerSign:', error.message);
-//   }
-// }
 
 function getPercent() {
   try {
