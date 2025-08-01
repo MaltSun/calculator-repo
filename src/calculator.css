@@ -1,0 +1,132 @@
+
+* {
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+:root {
+  --accent-background: rgba(225, 158, 35, 0.979);
+
+  --dark-theme-background: rgb(59, 59, 59);
+  --dark-theme-color: white;
+  --dark-theme-button: rgba(107, 106, 106, 0.842);
+  --dark-theme-light-button: rgba(138, 137, 137, 0.895);
+
+  --ligth-them-background: rgba(255, 255, 255, 0.842);
+  --light-theme-color: black;
+  --light-theme-button: rgba(212, 212, 212, 0.895);
+  --light-theme-light-button: rgba(189, 189, 189, 0.895);
+}
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap;
+  height: 90vh;
+  width: 100%;
+}
+
+#container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 555px;
+  background: var(--dark-theme-background);
+  border-radius: 10px;
+  border: 2px solid black;
+  overflow: hidden;
+  box-shadow: 10px 15px rgba(54, 53, 53, 0.283);
+}
+/* input */
+.inputBlock {
+  width: 100%;
+}
+input {
+  width: 100%;
+  height: 80px;
+  padding: 15px 3px 2px;
+  background-color: var(--dark-theme-background);
+  color: var(--dark-theme-color);
+  
+  border: none;
+  text-align: right;
+  font-size: 80px;
+
+  
+}
+input:active {
+  border: none;
+}
+/* buttons */
+.buttonsBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding: 0px;
+  gap: 3px;
+}
+button {
+  background-color: var(--dark-theme-button);
+  border: none;
+  width: 75px;
+  height: 60px;
+  color: var(--dark-theme-color);
+  padding: 0px;
+
+  font-size: 20px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-weight: 100;
+  transition: background-color 0.3s ease;
+
+}
+button:active {
+  background-color: grey;
+}
+button:hover {
+  cursor: pointer;
+}
+.number {
+  background-color: var(--dark-theme-light-button);
+}
+.number:active {
+  background-color: rgba(161, 161, 161, 0.895);
+}
+.accent {
+  background-color: var(--accent-background);
+}
+#zero {
+  width: 155px;
+}
+.meow {
+  height: 57px;
+}
+/* light theme */
+#container.lightTheme {
+  background: var(--ligth-theme-background);
+  border: 3px solide black;
+}
+button.lightTheme {
+  background-color: var(--light-theme-button);
+  color: var(--light-theme-color);
+}
+input.lightTheme {
+  background-color: var(--light-theme-background);
+  color: var(--light-theme-color);
+}
+button.lightTheme:active {
+  background-color: grey;
+}
+.number .lightTheme {
+  background-color: var(--accent-background);
+  color: var(--light-theme-color);
+}
+.accent.lightTheme{
+    background: var(--accent-background);
+    color: var(--light-theme-color)
+}
+.accent.lightTheme:active {
+  background: rgba(161, 161, 161, 0.895);
+} 
+
